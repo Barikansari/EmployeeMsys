@@ -1,0 +1,161 @@
+﻿@model IEnumerable<EmployeeDetailMsys.Models.EmployeeM>
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "EmployeeRecord";
+    int counter = 0;
+    int total = Model.Count();
+
+    //string jsonData = JsonConvert.SerializeObject(Model);
+    var jsonData = @Html.Raw(Json.Encode(Model));
+}
+
+<h2>EmployeeRecord</h2>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+<script src="dist/jquery.simple-checkbox-table.min.js"></script>
+<div>
+    
+    <a href='@Url.Action("index", "Employee")' class="btn btn-primary">Add Employee</a>
+
+</div>
+<br />
+<div class="container" style="background-color:blanchedalmond;">
+
+    <h2></h2>
+    <div>
+
+        @*<input type="submit" value="Export">*@
+        <a href='@Url.Action("PrintViewToPdf", "Employee")' class="btn btn-info">Export to PDF</a>
+        @*@Html.ActionLink("Export to PDF", "PrintViewToPdf")<br />*@
+        <input type="button" value="Print" id="btnClickPrint">
+
+    </div>
+    @using (Html.BeginForm("search", "Employee", FormMethod.Post))
+    {
+<div class="form-row" style="padding-left:50px; padding-bottom:50px; padding-top:10px; ">
+    <div class="col-md-2">
+        <label>Name:</label><br />
+        @Html.TextBox("searchString")
+    </div>
+    <div class="col-md-2">
+        <label>BirthDate:</label><br />
+        @Html.TextBox("birthString")
+    </div>
+    <div class="col-md-2">
+        <label>Salary:</label><br />
+        @Html.TextBox("salaryString")
+    </div>
+    <div class="col-md-2">
+        <label>Gender:</label><br />
+        @Html.TextBox("genderString")
+    </div>
+    <div class="col-md-2">
+        <label>Designation:</label><br />
+        @Html.TextBox("designationString")
+    </div>
+    <div class="col-md-2" style="padding-top:24px">
+        <input type="submit" value="Search" />
+        </div>
+    </div>
+    }
+
+
+    <br />
+    <table class="table">
+        <tr>
+            <th class="table-head">
+                <input type="checkbox" id="select_all_checkboxes" />
+                <label for="select_all_checkboxes"
+                       class="visuallyhidden">
+                    All
+                </label>
+
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Salary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Designation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Uimg)
+            </th>
+            <th></th>
+        </tr>
+
+
+
+        @foreach (var item in Model)
+        {
+            counter++;
+            <tr>
+                <td>
+                    <input type="checkbox" id="check_@counter">
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Salary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Designation)
+                </td>
+                <td>
+                    <a href="~/UserImages/@item.Uimg" target="_blank">View</a>
+                    @*@Html.DisplayFor(modelItem => item.Uimg)*@
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID })  @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    @*@Html.ActionLink("Details", "Details", new { id = item.ID }) |*@
+
+                </td>
+            </tr>
+        }
+
+    </table>
+
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#select_all_checkboxes').on('click', function() {
+            const val = $(this).is(":checked");
+            let totalData = parseInt('@total');
+
+
+            for (var i = 1; i <= totalData; i++) {
+                if (val) {
+                    $('#check_' + i).prop('checked', true);
+                } else {
+                    $('#check_' + i).prop('checked', false);
+                }
+
+            }
+        });
+
+        $('#btnClickPrint').on('click', function () {
+            var myData = '@jsonData';
+            myData = JSON.parse(myData);
+            printJS({ printable: myData, type: 'json', properties: ['FullName', 'DateOfBirth', 'Gender', 'Salary', 'Designation'] })
+        });
+
+        
+
+    })
+</script>

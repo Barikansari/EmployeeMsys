@@ -1,0 +1,77 @@
+﻿@model EmployeeDetailMsys.Models.ImportM
+
+@{
+    ViewBag.Title = "Detail";
+}
+
+<h2>Detail</h2>
+<hr />
+<div class="form-row" style="padding-bottom:10px;">
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.FullName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FullName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DateOfBirth)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Gender)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Gender)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Salary)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Salary)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Designation)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Designation)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.importdate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.importdate)
+            </dd>
+            @*<dt>
+                    @Html.DisplayNameFor(model => model.Uimg)
+                </dt>*@
+
+        </dl>
+    </div>
+    <div class="col-md-8" style="padding-bottom:20px;">
+        @*@Html.DisplayFor(model => model.Uimg)*@
+        <img src="~/UserImages/@Model.Uimg" style="height: 120px; width: 140px;" />
+        @*<img src="~/Content/img/@Url.Content(model =>model.ImagePath)" style="height:50px;width:100px;" />*@
+    </div>
+
+</div>
+
+
+<p>
+
+    @Html.ActionLink("Back to List", "FetchImportData")
+</p>

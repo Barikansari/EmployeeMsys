@@ -1,0 +1,188 @@
+﻿@model IEnumerable<EmployeeDetailMsys.Models.ImportM>
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "All ImportInfo";
+    int counter = 0;
+    int total = Model.Count();
+    var jsonData = @Html.Raw(Json.Encode(Model));
+}
+
+<h2>All Employee Information</h2>
+
+<div>
+
+    <a href='@Url.Action("ImportData", "Employee")' class="btn btn-primary">Import New File</a>
+
+    <a href='@Url.Action("index", "Employee")' class="btn btn-primary">Add Employee</a>
+</div>
+<br />
+
+<link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+<link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")"></script>
+<script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+<div class="container" style="background-color:blanchedalmond;">
+    <h2></h2>
+    <div>
+        @*<a href='@Url.Action("ExportToExcel", "Employee")?id=' + $('#Id_Of_Textbox').val() class="btn btn-warning"><i class="fas fa-file-download"></i> Excel</a>*@
+        <input type="button" value="Excel" onclick="location.href='@Url.Action("ExportToExcel", "Employee")?id=' + $('#GetCheckedValue').val()" />
+
+        <a href='@Url.Action("ExportToCSV", "Employee")' class="btn btn-success"><i class="fas fa-file-download"></i> CSV</a>
+        <a href='@Url.Action("ExportToPdf", "Employee")' class="btn btn-info"><i class="fas fa-file-download"></i> PDF</a>
+        <input type="button" class="btn btn-primary" value="Print" id="btnClickPrint">
+
+    </div>
+
+    @using (Html.BeginForm("search", "Employee", FormMethod.Post))
+    {
+        <div class="form-row" style="padding-left:50px; padding-bottom:50px; padding-top:10px;  ">
+            <div class="col-md-2">
+                <label style="color:blue;">Name:</label><br />
+                @Html.TextBox("searchString")
+            </div>
+            <div class="col-md-2">
+                <label style="color:blue;">BirthDate:</label><br />
+
+                <input type="date" id="sdatepicker" name="startdate" />
+                <input type="date" id="edatepicker" name="enddate" />
+
+            </div>
+            <div class="col-md-2">
+                <label style="color:blue;">Salary:</label><br />
+                <input type="text" name="sSalary" />
+                <input type="text" name="eSalary" />
+
+
+            </div>
+            <div class="col-md-2">
+                <label style="color:blue;">Gender:</label><br />
+                <select name="genderstring" style="height:27px; width: 150px;">
+                    <option>Choose One..</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                </select>
+
+            </div>
+            <div class="col-md-2">
+                <label style="color:blue;">Designation:</label><br />
+                @Html.TextBox("designationString")
+            </div>
+            <div class="col-md-2" style="padding-top:24px">
+                <input type="submit" class="btn btn-primary" value="Search" />
+            </div>
+        </div>
+    }
+
+    <br />
+
+
+    <div class="code-cut">
+
+
+        @Html.Grid(Model).Named("grid").Columns(Columns =>
+
+   {
+       counter++;
+       Columns.Add().Titled("<input name='allChk' type='checkbox' id='select_all_checkboxes' />")
+       .Encoded(false).Sanitized(false).SetWidth(30)
+       .RenderValueAs(o => Html.CheckBox("checked", false, new { name = "selectedIds", id = "check_" + o.SN, value = o.Index, OnClick = "selectedCheckbox(this," + o.Index + ");" }));
+
+       Columns.Add(c => c.importdate).Titled("importdate").Filterable(true);
+       Columns.Add(c => c.FullName).Titled("FullName").Filterable(true);
+       Columns.Add(c => c.DateOfBirth).Titled("DateOfBirth").Filterable(true);
+       Columns.Add(c => c.Gender).Titled("Gender").Filterable(true);
+       Columns.Add(c => c.Salary).Titled("Salary").Filterable(true);
+       Columns.Add(c => c.Designation).Titled("Designation").Filterable(true);
+       Columns.Add(c => c.Uimg).Titled("View").Filterable(true);
+       //< a href = "~/UserImages/@item.Uimg" target = "_blank" > View </ a >
+
+       Columns.Add()
+   .Encoded(false)
+   .Sanitized(false)
+   .SetWidth(30)
+   .RenderValueAs(o => Html.ActionLink("Detail", "Detail", new { id = o.Index }, new { @class = "btn btn-info" }));
+       Columns.Add()
+                .Encoded(false)
+                .Sanitized(false)
+                .SetWidth(30)
+                .RenderValueAs(o => Html.ActionLink("Edit", "Edit", new { id = o.Index }, new { @class = "btn btn-primary" }));
+       Columns.Add()
+                .Encoded(false)
+                .Sanitized(false)
+                .SetWidth(30)
+                .RenderValueAs(o => Html.ActionLink("Delete", "Delete", new { id = o.Index }, new { @class = "btn btn-danger" }));
+
+
+
+   }).WithPaging(10).Sortable(true)
+
+
+
+
+    </div>
+</div>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+            window.onload = function () {
+                alert("@ViewBag.Message");
+            };
+    </script>
+
+}
+<script type="text/javascript">
+    $(function () {
+
+        $('#select_all_checkboxes').on('click', function() {
+            const val = $(this).is(":checked");
+            let totalData = parseInt('@total');
+
+
+            for (var i = 1; i <= totalData; i++) {
+                if (val) {
+                    $('#check_' + i).prop('checked', true);
+                } else {
+                    $('#check_' + i).prop('checked', false);
+                }
+
+            }
+        });
+
+        // check if checkbox is checked or not
+        function GetCheckedValue() {
+            let checkedArr = [];
+            for (var i = 1; i <= totalData; i++) {
+                if ($('#check_' + i).is(':checked')) {
+                    checkedArr.push($('#check_' + i).val());
+                }
+            }
+
+            if (checkedArr.length == 0) {
+                alert('No row selected to export.');
+                return;
+            }
+            return checkedArr.join();
+        }
+
+        $('#btnClickPrint').on('click', function () {
+            var myData = '@jsonData';
+            myData = JSON.parse(myData);
+            printJS({ printable: myData, type: 'json', properties: ['FullName', 'DateOfBirth', 'Gender', 'Salary', 'Designation', 'Uimg'] })
+        });
+
+
+
+    })
+</script>
+@*<script>
+        $(function () {
+            $("#sdatepicker").datepicker();
+        }
+        );
+        $(function () {
+            $("#edatepicker").datepicker();
+        }
+        );
+    </script>*@

@@ -1,0 +1,43 @@
+﻿@using EmployeeDetailMsys.Models
+@{
+    ViewBag.Title = "ImportData";
+    ResponseModel response = (ViewBag.Validation as ResponseModel) ?? new ResponseModel();
+}
+
+<h2></h2>
+<div class="container" style="background-color:blanchedalmond;">
+    <form method="post" enctype="multipart/form-data">
+        <h2>Import File</h2>
+        <div>
+            <a href='@Url.Action("FetchImportData", "Employee")' class="btn btn-primary">All Import Info </a>
+        </div>
+       
+        <br />
+        <div>
+            <input name="postedfile" type="file" required />
+
+        </div>
+        <br />
+        <div>
+            <button type="submit">Import</button>
+        </div>
+        <br />
+    </form>
+</div>
+<script type="text/javascript">
+    const isSuccess = '@response.IsSuccess';
+    const message = '@response.Message';
+
+    if (message) alert(message);
+    //if (isSuccess) alert(isSuccess);
+</script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+            window.onload = function () {
+                alert("@ViewBag.Message");
+            };
+    </script>
+
+}
